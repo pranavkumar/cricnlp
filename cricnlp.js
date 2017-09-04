@@ -5,7 +5,7 @@ function id(x) {return x[0]; }
 var grammar = {
     Lexer: undefined,
     ParserRules: [
-    {"name": "hello", "symbols": ["minimax", "ws", "environsel"]},
+    {"name": "cricnlp", "symbols": ["minimax", "ws", "environsel"]},
     {"name": "minimax", "symbols": ["maxima"]},
     {"name": "minimax", "symbols": ["minima"]},
     {"name": "environsel", "symbols": ["entityenviron"]},
@@ -161,7 +161,7 @@ var grammar = {
     {"name": "ws", "symbols": [{"literal":" "}]},
     {"name": "ws", "symbols": [{"literal":" "}, "ws"]}
 ]
-  , ParserStart: "hello"
+  , ParserStart: "cricnlp"
 }
 if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
    module.exports = grammar;

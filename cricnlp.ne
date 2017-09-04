@@ -1,5 +1,5 @@
 
-hello -> minimax ws environsel
+cricnlp -> minimax ws environsel
 
 minimax -> maxima | minima
 environsel -> entityenviron | statsenviron | achievementenviron
