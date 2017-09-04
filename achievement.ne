@@ -1,18 +1,21 @@
 @include "./wicketpos.ne"
 @include "./ws.ne"
-achievement-> "wicket taker"
-		| "run getter"
-		| "scorer"
-		| "runs"
-		| "wickets"
-		| "fifties"
-		| "centuries"
-		| "score"
+achievement-> "wicket taker"i
+		| "run getter"i
+		| "scorer"i
+		| "runs"i
+		| "wickets"i
+		| "fifties"i
+		| "centuries"i
+		| "score"i
+		| "scorers"i
 		| partnership
 
-partnership -> "partnership"
-		| nthwicket ws "partnership"		
+partnership -> partnershipstring
+		| nthwicket ws partnershipstring
+
 
 nthwicket -> wicketpos ws "wicket"
 
-
+partnershipstring -> "partnership"i
+			| "partnerships"i

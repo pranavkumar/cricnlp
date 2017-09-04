@@ -1,8 +1,8 @@
 @include "./environsel.ne"
 @include "./minimax.ne"
-@include "./ws.ne"
+@builtin "whitespace.ne"
 
-cricnlp -> minimax ws environsel
+cricnlp -> minimax _ environsel
 
 
 

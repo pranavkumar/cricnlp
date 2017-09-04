@@ -1,8 +1,9 @@
 @include "./entity.ne"
 @include "./format.ne"
-@include "./tournaments.ne"
+@include "./tournament.ne"
 @include "./achievement.ne"
 @include "./skill.ne"
+@include "./place.ne"
 @include "./ws.ne"
 
 
@@ -15,4 +16,5 @@ achievementenviron -> achievement ws environ
 stats -> skill ws "avg"
 environ -> "in" ws arena
 arena -> format
-		| tournaments				
+		| tournament
+		| place				

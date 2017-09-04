@@ -1,4 +1,4 @@
-tournaments -> "Asia Cup"i
+tournament -> "Asia Cup"i
 		| "World Cup"i
 		| "IPL"i
 		| "PSL"i
