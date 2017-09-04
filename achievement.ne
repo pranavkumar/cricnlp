@@ -1,4 +1,5 @@
 @include "./wicketpos.ne"
+@include "./ws.ne"
 achievement-> "wicket taker"
 		| "run getter"
 		| "scorer"
