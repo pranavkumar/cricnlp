@@ -12,11 +12,15 @@
     "nearley": "^2.11.0"
   },
   "devDependencies": {
+    "async": "^2.5.0",
     "gulp": "^3.9.1",
+    "gulp-file": "^0.3.0",
     "gulp-print": "^2.0.1",
     "gulp-shell": "^0.6.3",
     "gulp-util": "^3.0.8",
     "gulp-watch": "^4.3.11",
+    "mkdirp": "^0.5.1",
+    "read-file": "^0.2.0",
     "shelljs": "^0.7.8"
   }
 }
