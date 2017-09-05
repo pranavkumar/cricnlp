@@ -1,9 +1,9 @@
-@include "./grammars/entity.ne"
-@include "./grammars/format.ne"
-@include "./grammars/tournament.ne"
-@include "./grammars/achievement.ne"
-@include "./grammars/skill.ne"
-@include "./grammars/place.ne"
+@include "./entity.ne"
+@include "./grammars/environsel/format.ne"
+@include "./grammars/environsel/tournament.ne"
+@include "./grammars/environsel/achievement/achievement.ne"
+@include "./grammars/environsel/skill.ne"
+@include "./grammars/environsel/place.ne"
 
 
 
