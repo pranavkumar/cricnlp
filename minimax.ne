@@ -1,5 +1,9 @@
 @builtin "number.ne"
 @builtin "whitespace.ne"
+@builtin "whitespace.ne"
+
+
+@include "./ws.ne"
 
 
 
@@ -17,8 +21,8 @@ uncountedextrema -> maxima
 			| minima
 
 
-countedmaxima -> maxima _ number
-countedminima -> minima _ number
+countedmaxima -> maxima ws number
+countedminima -> minima ws number
 
 
 maxima -> "best" 
@@ -34,5 +38,8 @@ minima -> "worst"
 
 number -> int 
 	| int number
+
+ws -> " "
+		| " " ws	
 
 

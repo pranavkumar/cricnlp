@@ -17,4 +17,6 @@ stats -> skill ws "avg"
 environ -> "in" ws arena
 arena -> format
 		| tournament
-		| place				
+		| place
+ws -> " "
+		| " " ws						

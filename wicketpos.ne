@@ -24,3 +24,6 @@ alphapos -> "first"
 	| "ninth"
 	| "tenth"
 	| "last"
+
+ws -> " "
+		| " " ws	
