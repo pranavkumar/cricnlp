@@ -1,10 +1,9 @@
-@include "./entity.ne"
-@include "./format.ne"
-@include "./tournament.ne"
-@include "./achievement.ne"
-@include "./skill.ne"
-@include "./place.ne"
-@include "./ws.ne"
+@include "./grammars/entity.ne"
+@include "./grammars/format.ne"
+@include "./grammars/tournament.ne"
+@include "./grammars/achievement.ne"
+@include "./grammars/skill.ne"
+@include "./grammars/place.ne"
 
 
 
@@ -14,7 +13,7 @@ entityenviron -> entity ws environ
 statsenviron -> stats ws environ
 achievementenviron -> achievement ws environ
 stats -> skill ws "avg"
-environ -> "in" ws arena
+environ -> "in" ws "test"
 arena -> format
 		| tournament
 		| place

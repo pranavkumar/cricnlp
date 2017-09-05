@@ -1,4 +1,4 @@
-@include "./wicketpos.ne"
+@include "./grammars/environsel/achievement/wicketpos.ne"
 
 achievement-> wickettakerstring
 		| "run getter"i

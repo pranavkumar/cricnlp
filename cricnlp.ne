@@ -1,10 +1,9 @@
-@include "./environsel.ne"
-@include "./minimax.ne"
-@builtin "whitespace.ne"
-@include "./ws.ne"
+@include "./grammars/environsel.ne"
+@include "./grammars/minimax/minimax.ne"
+@include "./grammars/ws.ne"
 
 
-cricnlp -> minimax _ environsel
+cricnlp -> minimax ws environsel
 
 
 

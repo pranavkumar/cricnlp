@@ -1,4 +1,4 @@
-@include "./ws.ne"
+
 wicketpos -> numpos aftern
 		| numpos ws aftern
 		| alphapos

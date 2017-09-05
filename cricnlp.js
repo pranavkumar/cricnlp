@@ -41,8 +41,6 @@ var grammar = {
     {"name": "tournament", "symbols": ["tournament$subexpression$3"]},
     {"name": "tournament$subexpression$4", "symbols": [/[pP]/, /[sS]/, /[lL]/], "postprocess": function (d) {return d.join(""); }},
     {"name": "tournament", "symbols": ["tournament$subexpression$4"]},
-    {"name": "ws", "symbols": [{"literal":" "}]},
-    {"name": "ws", "symbols": [{"literal":" "}, "ws"]},
     {"name": "wicketpos", "symbols": ["numpos", "aftern"]},
     {"name": "wicketpos", "symbols": ["numpos", "ws", "aftern"]},
     {"name": "wicketpos", "symbols": ["alphapos"]},
@@ -132,7 +130,8 @@ var grammar = {
     {"name": "stats$string$1", "symbols": [{"literal":"a"}, {"literal":"v"}, {"literal":"g"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "stats", "symbols": ["skill", "ws", "stats$string$1"]},
     {"name": "environ$string$1", "symbols": [{"literal":"i"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
-    {"name": "environ", "symbols": ["environ$string$1", "ws", "arena"]},
+    {"name": "environ$string$2", "symbols": [{"literal":"t"}, {"literal":"e"}, {"literal":"s"}, {"literal":"t"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "environ", "symbols": ["environ$string$1", "ws", "environ$string$2"]},
     {"name": "arena", "symbols": ["format"]},
     {"name": "arena", "symbols": ["tournament"]},
     {"name": "arena", "symbols": ["place"]},
@@ -262,7 +261,9 @@ var grammar = {
     {"name": "number", "symbols": ["int", "number"]},
     {"name": "ws", "symbols": [{"literal":" "}]},
     {"name": "ws", "symbols": [{"literal":" "}, "ws"]},
-    {"name": "cricnlp", "symbols": ["minimax", "_", "environsel"]}
+    {"name": "ws", "symbols": [{"literal":" "}]},
+    {"name": "ws", "symbols": [{"literal":" "}, "ws"]},
+    {"name": "cricnlp", "symbols": ["minimax", "ws", "environsel"]}
 ]
   , ParserStart: "cricnlp"
 }
