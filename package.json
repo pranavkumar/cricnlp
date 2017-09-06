@@ -21,6 +21,7 @@
     "gulp-watch": "^4.3.11",
     "mkdirp": "^0.5.1",
     "read-file": "^0.2.0",
-    "shelljs": "^0.7.8"
+    "shelljs": "^0.7.8",
+    "vinyl": "^2.1.0"
   }
 }
