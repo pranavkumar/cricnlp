@@ -27,9 +27,7 @@ function getDeps(buffer, dirname) {
 
         }
     }
-
     var replacereg = /@include.*\n/g;
-
     var replacestr = [];
     while (true) {
         var match = replacereg.exec(buffer);
@@ -43,8 +41,6 @@ function getDeps(buffer, dirname) {
     for (var i = 0; i < replacestr.length; i++) {
         buffer = buffer.replace(replacestr[i], "");
     }
-
-    //console.log(buffer);
     return { buffer: buffer, depsArr: depsArr };
 }
 
@@ -55,13 +51,17 @@ function getBufferAndDeps(file) {
 };
 
 gulp.task('watch', function() {
-    return watch('grammars/**/*.ne', function(file) {
-        console.log("changed " + file.path);
-        var testname = path.basename(file.path, ".ne") + ".test.ne";
-        var output = path.join(path.dirname(file.path), path.basename(file.path, ".ne") + ".js");
-        var compilestr = "nearleyc " + file.path + " -o " + output;
+    return watch('grammars/**/*.ne', { events: ['add', 'change'] }, function(file) {
 
-        var glob = "start \n";
+        console.log("changed " + file.path);
+        var tempname = path.basename(file.path, ".ne") + ".temp.ne";
+        var testfilename = path.join(path.dirname(file.path), path.basename(file.path, ".ne") + ".test.js");
+        console.log(testfilename);
+        var outputdest = path.join("./tmp", path.basename(file.path, ".ne") + ".output.js");
+        var tempdest = path.join("./tmp", tempname);
+        var compilestr = "nearleyc " + tempdest + " -o " + outputdest;
+
+        var glob = "";
         var deps = [];
         var bufferAndDeps = getBufferAndDeps(file);
         glob += bufferAndDeps.buffer;
@@ -70,45 +70,47 @@ gulp.task('watch', function() {
 
 
         while (deps.length >= 0) {
-            //console.log("here");
             if (deps.length == 0) {
-                console.log(glob);
-                break;
+                mkdirp('./tmp', function(err) {
+                    if (!err) {
+                        fs.writeFile(path.join("./tmp", tempname), glob, function(err) {
+                            if (!err) {
+                                shell.exec(compilestr, function(code, stdout, stderr) {
+                                    if (stderr == "") {
+                                        console.log("compiled successfully");
+                                        if (fs.existsSync(testfilename)) {
+                                            console.log("test exists");
+                                            var testfile = require(testfilename);
+                                            console.log(testfile.cases);
+                                            for (var i = 0; i < testfile.cases.length; i++) {
+                                                var current = testfile.cases[i];
+                                                var teststr = "nearley-test -i " + "'" + current + "' " + outputdest;
+                                                console.log(teststr);
+                                                shell.exec(teststr, function(code, stdout, stderr) {
+                                                    if (stderr != "") {
+                                                        console.warn("failed for " + current);
+                                                    }
+                                                });
+                                            }
+
+                                        } else {
+                                            console.log("no tests exists");
+                                        }
+                                    }
+                                });
+                                return;
+                            }
+                        })
+                    }
+                    return;
+                })
+                return;
             }
             var current = deps.pop();
-            //console.log(current);
             bufferAndDeps = getBufferAndDeps(current);
-            //console.log("here2");
-            //console.log(bufferAndDeps);
             glob += "\n" + bufferAndDeps.buffer;
             deps = deps.concat(bufferAndDeps.deps);
         }
-
-
-
-        /*
-
-        read(file.path, 'utf-8', function(err, buffer) {
-            var depPaths = getDeps(buffer, path.dirname(file.path));
-            mkdirp('./tmp', function(err) {
-                if (!err) {
-                    fs.writeFile(path.join("./tmp", testname), buffer, function(err) {
-                        console.log(err);
-                    })
-                }
-            })
-        });
-        */
-
-        /*
-        shell.exec(compilestr, function(code, stdout, stderr) {
-            if (stderr == "") {
-                console.log("compiled successfully");
-                shell.echo("done");
-                //shell.exec("nearley-test -i 'top scorers in test' cricnlp.js");
-            }
-        });
-        */
 
     });
 });
