@@ -1,4 +1,4 @@
-@include "./wicketpos.ne"
+@include "./wicketpos/wicketpos.ne"
 
 achievement-> wickettakerstring
 		| "run getter"i
@@ -6,6 +6,7 @@ achievement-> wickettakerstring
 		| "runs"i
 		| "wickets"i
 		| "fifties"i
+		| "century"i
 		| "centuries"i
 		| "score"i
 		| "scorers"i

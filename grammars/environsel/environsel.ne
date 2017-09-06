@@ -1,9 +1,9 @@
-@include "./format.ne"
-@include "./entity.ne"
-@include "./tournament.ne"
+@include "./format/format.ne"
+@include "./entity/entity.ne"
+@include "./tournament/tournament.ne"
 @include "./achievement/achievement.ne"
-@include "./skill.ne"
-@include "./place.ne"
+@include "./place/place.ne"
+@include "./skill/skill.ne"
 
 
 

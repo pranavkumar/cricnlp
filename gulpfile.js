@@ -6,6 +6,7 @@ var gulp = require('gulp'),
     mkdirp = require('mkdirp'),
     file = require('gulp-file'),
     fs = require('fs'),
+    color = require('gulp-color'),
     vinyl = require('vinyl'),
     shell = require('shelljs');
 
@@ -79,22 +80,28 @@ gulp.task('watch', function() {
                                     if (stderr == "") {
                                         console.log("compiled successfully");
                                         if (fs.existsSync(testfilename)) {
-                                            console.log("test exists");
+                                            console.log(color("=> test exists", 'GREEN'));
+                                            //reload test files
+                                            //crequire.undef(testfilename);
                                             var testfile = require(testfilename);
-                                            console.log(testfile.cases);
+                                            console.log(color(testfile.cases.toString(), "BLUE"));
                                             for (var i = 0; i < testfile.cases.length; i++) {
                                                 var current = testfile.cases[i];
                                                 var teststr = "nearley-test -i " + "'" + current + "' " + outputdest;
-                                                console.log(teststr);
-                                                shell.exec(teststr, function(code, stdout, stderr) {
-                                                    if (stderr != "") {
-                                                        console.warn("failed for " + current);
+                                                //console.log(teststr);
+                                                shell.exec(teststr, {silent: true},function(code, stdout, stderr) {
+                                                    if (stderr == "") {
+                                                        console.log(color("passed case => " + this.current, "GREEN"));
+                                                    } else {
+                                                        console.log(color("failed case => " + this.current, "RED"));
                                                     }
-                                                });
+                                                }.bind({ current: current }));
+
                                             }
 
                                         } else {
-                                            console.log("no tests exists");
+                                            console.log(color("=> no tests exists", "YELLOW"));
+                                            return;
                                         }
                                     }
                                 });
