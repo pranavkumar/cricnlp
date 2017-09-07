@@ -2,6 +2,7 @@
     "cases": ["batsmen",
         "bowler",
         "fielders",
-        "fielders"
+        "fielders",
+        "bowlers"
     ]
 }

@@ -12,8 +12,9 @@ environsel -> entityenviron | statsenviron | achievementenviron
 entityenviron -> entity ws environ
 statsenviron -> stats ws environ
 achievementenviron -> achievement ws environ
-stats -> skill ws "avg"
-environ -> "in" ws "test"
+stats -> skill
+	| skill ws "avg"
+environ -> "in" ws arena
 arena -> format
 		| tournament
 		| place

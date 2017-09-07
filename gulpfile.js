@@ -77,18 +77,25 @@ function pathExists(path) {
     return deferred.promise;
 }
 
+gulp.task('watch-tests', function() {
+    return watch('grammars/**/*.test.json', { events: ['add', 'change'] }, function(file) {
+        console.log(color("changed test " + file.path, "YELLOW"));
+    })
+})
 
 
-gulp.task('watch', function() {
+
+gulp.task('watch-grammars', function() {
     return watch('grammars/**/*.ne', { events: ['add', 'change'] }, function(file) {
 
-        console.log("changed " + file.path);
+        console.log(color("changed grammar : " + file.path, "BLUE"));
         var tempname = path.basename(file.path, ".ne") + ".temp.ne";
-        var testfilename = path.join(path.dirname(file.path), path.basename(file.path, ".ne") + ".test.json");
-        console.log(testfilename);
-        var outputdest = path.join("./tmp", path.basename(file.path, ".ne") + ".output.js");
         var tempdest = path.join("./tmp", tempname);
+        var outputdest = path.join("./tmp", path.basename(file.path, ".ne") + ".output.js");
         var compilestr = "nearleyc " + tempdest + " -o " + outputdest;
+
+        var testfilename = path.join(path.dirname(file.path), path.basename(file.path, ".ne") + ".test.json");
+        
 
         var glob = "";
         var deps = [];
@@ -108,7 +115,7 @@ gulp.task('watch', function() {
                         return execShell(compilestr);
                     })
                     .then(() => {
-                        console.log(color("compiled successfully", "GREEN"));
+                        console.log(color("compiled successfully : " + path.basename(file.path), "GREEN"));
                         return fsex.pathExists(testfilename);
                     })
                     .then(exists => {
@@ -117,11 +124,14 @@ gulp.task('watch', function() {
                             return fsex.readJson(testfilename);
                         } else {
                             console.log(color("=> no tests exists", "YELLOW"));
+
                             return;
                         }
                     })
                     .then(testfile => {
-                        console.log(color(testfile.cases.toString(), "BLUE"));
+
+                        if (!testfile || !testfile.cases || testfile.cases.length == 0) return;
+                        console.log(color(testfile.cases.toString(), "YELLOW"));
                         for (var i = 0; i < testfile.cases.length; i++) {
                             var current = testfile.cases[i];
                             var teststr = "nearley-test -i " + "'" + current + "' " + outputdest;
@@ -131,6 +141,7 @@ gulp.task('watch', function() {
                                 if (stderr == "") {
                                     console.log(color("passed case => " + this.current, "GREEN"));
                                 } else {
+                                    console.log(stderr);
                                     console.log(color("failed case => " + this.current, "RED"));
                                 }
                             }.bind({ current: current }));
@@ -139,7 +150,7 @@ gulp.task('watch', function() {
                         }
                     })
                     .catch(err => {
-                        console.log(err);
+                        console.log(color(err, "RED"));
                         return;
                     });
             }
@@ -153,4 +164,4 @@ gulp.task('watch', function() {
 });
 
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['watch-grammars', 'watch-tests']);

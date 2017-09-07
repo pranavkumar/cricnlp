@@ -8,3 +8,5 @@ entity -> "batsman"i
 		| "umpires"i
 		| "fielder"i
 		| "fielders"i
+		| "player"i
+		| "players"i

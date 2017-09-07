@@ -5,11 +5,10 @@
 
 
 
-minimax -> unqextrema
 
 
 
-unqextrema -> countedextrema
+minimax -> countedextrema
 			| uncountedextrema
 
 countedextrema -> countedmaxima
@@ -27,6 +26,7 @@ maxima -> "best"
 		| "top" 
 		| "most" 
 		| "highest"
+		| "greatest"
 		| "fastest"
 
 minima -> "worst" 

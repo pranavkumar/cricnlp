@@ -2,6 +2,7 @@
 
 achievement-> wickettakerstring
 		| "run getter"i
+		| "run getters"i
 		| "scorer"i
 		| "runs"i
 		| "wickets"i

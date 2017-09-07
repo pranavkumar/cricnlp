@@ -1,0 +1,10 @@
+{
+    "cases": ["bowler in test",
+        "bowlers in odi",
+        "batsmen in psl",
+        "batting in ipl",
+        "batting     avg in ipl",
+        "fielders in world cup",
+        "centuries in psl"
+    ]
+}
