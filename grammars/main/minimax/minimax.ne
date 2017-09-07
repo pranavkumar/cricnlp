@@ -19,7 +19,9 @@ uncountedextrema -> maxima
 
 
 countedmaxima -> maxima ws number
+	| number ws maxima
 countedminima -> minima ws number
+	| number ws minima
 
 
 maxima -> "best" 
@@ -34,8 +36,17 @@ minima -> "worst"
 		| "lowest"
 		| "slowest"
 
+
+
+aftern -> "st"
+		| "nd"
+		| "rd"
+		| "th"		
+
 number -> int 
 	| int number
+
+
 
 ws -> " "
 		| " " ws	

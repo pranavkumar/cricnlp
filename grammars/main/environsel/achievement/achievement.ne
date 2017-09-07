@@ -11,6 +11,7 @@ achievement-> wickettakerstring
 		| "century"i
 		| "centuries"i
 		| "score"i
+		| "scores"i
 		| "scorers"i
 		| partnership
 

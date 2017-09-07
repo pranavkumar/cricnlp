@@ -79,7 +79,79 @@ function pathExists(path) {
 
 gulp.task('watch-tests', function() {
     return watch('grammars/**/*.test.json', { events: ['add', 'change'] }, function(file) {
-        console.log(color("changed test " + file.path, "YELLOW"));
+        console.log(color("changed test : " + file.path, "BLUE"));
+        var srcfilename = path.join(path.dirname(file.path), path.basename(file.path, ".test.json") + ".ne");
+        console.log(srcfilename);
+        var srcfile = new vinyl({ cwd: path.dirname(file.path), path: srcfilename });
+
+
+        var tempname = path.basename(srcfile.path, ".ne") + ".temp.ne";
+        var tempdest = path.join("./tmp", tempname);
+        var outputdest = path.join("./tmp", path.basename(srcfile.path, ".ne") + ".output.js");
+        var compilestr = "nearleyc " + tempdest + " -o " + outputdest;
+
+        var glob = "";
+        var deps = [];
+        var bufferAndDeps = getBufferAndDeps(srcfile);
+        glob += bufferAndDeps.buffer;
+        deps = deps.concat(bufferAndDeps.deps);
+
+        while (deps.length >= 0) {
+            if (deps.length == 0) {
+                fsex.ensureDir('./tmp')
+                    .then(() => {
+                        return fsex.outputFile(path.join("./tmp", tempname), glob);
+                    })
+                    .then(() => {
+                        return execShell(compilestr);
+                    })
+                    .then(() => {
+                        console.log(color("compiled successfully : " + path.basename(srcfile.path), "GREEN"));
+                        return fsex.pathExists(file.path);
+                    })
+                    .then(exists => {
+                        if (exists) {
+                            console.log(color("=> test exists", 'GREEN'));
+                            return fsex.readJson(file.path);
+                        } else {
+                            console.log(color("=> no tests exists", "YELLOW"));
+
+                            return;
+                        }
+                    })
+                    .then(testfile => {
+
+                        if (!testfile || !testfile.cases || testfile.cases.length == 0) return;
+                        console.log(color(testfile.cases.toString(), "YELLOW"));
+                        for (var i = 0; i < testfile.cases.length; i++) {
+                            var current = testfile.cases[i];
+                            var teststr = "nearley-test -i " + "'" + current + "' " + outputdest;
+
+
+                            shell.exec(teststr, { silent: true }, function(code, stdout, stderr) {
+                                if (stderr == "") {
+                                    console.log(color("passed case => " + this.current, "GREEN"));
+                                } else {
+                                    console.log(stderr);
+                                    console.log(color("failed case => " + this.current, "RED"));
+                                }
+                            }.bind({ current: current }));
+
+
+                        }
+                    })
+                    .catch(err => {
+                        console.log(color(err, "RED"));
+                        return;
+                    });
+            }
+            var current = deps.pop();
+            bufferAndDeps = getBufferAndDeps(current);
+            glob += "\n" + bufferAndDeps.buffer;
+            deps = deps.concat(bufferAndDeps.deps);
+        }
+
+
     })
 })
 
@@ -89,13 +161,14 @@ gulp.task('watch-grammars', function() {
     return watch('grammars/**/*.ne', { events: ['add', 'change'] }, function(file) {
 
         console.log(color("changed grammar : " + file.path, "BLUE"));
+
         var tempname = path.basename(file.path, ".ne") + ".temp.ne";
         var tempdest = path.join("./tmp", tempname);
         var outputdest = path.join("./tmp", path.basename(file.path, ".ne") + ".output.js");
         var compilestr = "nearleyc " + tempdest + " -o " + outputdest;
 
         var testfilename = path.join(path.dirname(file.path), path.basename(file.path, ".ne") + ".test.json");
-        
+
 
         var glob = "";
         var deps = [];
