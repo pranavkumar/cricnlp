@@ -1,4 +1,5 @@
 @include "./wicketpos/wicketpos.ne"
+@builtin "number.ne"
 
 achievement-> wickettakerstring
 		| "run getter"i
@@ -14,7 +15,13 @@ achievement-> wickettakerstring
 		| partnership
 
 partnership -> partnershipstring
-		| nthwicket ws partnershipstring
+		| wicketpartnership
+		| runpartnership
+
+
+wicketpartnership -> nthwicket ws partnershipstring
+
+runpartnership -> number ws runstring ws partnershipstring
 
 
 nthwicket -> wicketpos ws "wicket"
@@ -22,8 +29,14 @@ nthwicket -> wicketpos ws "wicket"
 partnershipstring -> "partnership"i
 			| "partnerships"i
 
+runstring -> "run"
+	| "runs"			
+
 wickettakerstring -> "wicket taker"i
 			| "wicket takers"i
+
+number -> int 
+	| int number
 
 ws -> " "
 		| " " ws			
