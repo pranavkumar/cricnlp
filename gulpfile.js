@@ -6,8 +6,10 @@ var gulp = require('gulp'),
     mkdirp = require('mkdirp'),
     file = require('gulp-file'),
     fs = require('fs'),
+    fsex = require('fs-extra'),
     color = require('gulp-color'),
     vinyl = require('vinyl'),
+    q = require('q'),
     shell = require('shelljs');
 
 function getDeps(buffer, dirname) {
@@ -51,12 +53,38 @@ function getBufferAndDeps(file) {
     return { buffer: deps.buffer, deps: deps.depsArr };
 };
 
+function execShell(command) {
+    var deferred = q.defer();
+    shell.exec(command, function(code, stdout, stderr) {
+        if (stderr == "") {
+            deferred.resolve();
+        } else {
+            deferred.reject(new Error(stderr));
+        }
+    });
+    return deferred.promise;
+}
+
+function pathExists(path) {
+    var deferred = q.defer();
+    fs.access(path, function(err) {
+        if (err == null) {
+            deferred.resolve(true);
+        } else {
+            deferred.reject(new Error(err));
+        }
+    });
+    return deferred.promise;
+}
+
+
+
 gulp.task('watch', function() {
     return watch('grammars/**/*.ne', { events: ['add', 'change'] }, function(file) {
 
         console.log("changed " + file.path);
         var tempname = path.basename(file.path, ".ne") + ".temp.ne";
-        var testfilename = path.join(path.dirname(file.path), path.basename(file.path, ".ne") + ".test.js");
+        var testfilename = path.join(path.dirname(file.path), path.basename(file.path, ".ne") + ".test.json");
         console.log(testfilename);
         var outputdest = path.join("./tmp", path.basename(file.path, ".ne") + ".output.js");
         var tempdest = path.join("./tmp", tempname);
@@ -72,46 +100,48 @@ gulp.task('watch', function() {
 
         while (deps.length >= 0) {
             if (deps.length == 0) {
-                mkdirp('./tmp', function(err) {
-                    if (!err) {
-                        fs.writeFile(path.join("./tmp", tempname), glob, function(err) {
-                            if (!err) {
-                                shell.exec(compilestr, function(code, stdout, stderr) {
-                                    if (stderr == "") {
-                                        console.log("compiled successfully");
-                                        if (fs.existsSync(testfilename)) {
-                                            console.log(color("=> test exists", 'GREEN'));
-                                            //reload test files
-                                            //crequire.undef(testfilename);
-                                            var testfile = require(testfilename);
-                                            console.log(color(testfile.cases.toString(), "BLUE"));
-                                            for (var i = 0; i < testfile.cases.length; i++) {
-                                                var current = testfile.cases[i];
-                                                var teststr = "nearley-test -i " + "'" + current + "' " + outputdest;
-                                                //console.log(teststr);
-                                                shell.exec(teststr, {silent: true},function(code, stdout, stderr) {
-                                                    if (stderr == "") {
-                                                        console.log(color("passed case => " + this.current, "GREEN"));
-                                                    } else {
-                                                        console.log(color("failed case => " + this.current, "RED"));
-                                                    }
-                                                }.bind({ current: current }));
+                fsex.ensureDir('./tmp')
+                    .then(() => {
+                        return fsex.outputFile(path.join("./tmp", tempname), glob);
+                    })
+                    .then(() => {
+                        return execShell(compilestr);
+                    })
+                    .then(() => {
+                        console.log(color("compiled successfully", "GREEN"));
+                        return fsex.pathExists(testfilename);
+                    })
+                    .then(exists => {
+                        if (exists) {
+                            console.log(color("=> test exists", 'GREEN'));
+                            return fsex.readJson(testfilename);
+                        } else {
+                            console.log(color("=> no tests exists", "YELLOW"));
+                            return;
+                        }
+                    })
+                    .then(testfile => {
+                        console.log(color(testfile.cases.toString(), "BLUE"));
+                        for (var i = 0; i < testfile.cases.length; i++) {
+                            var current = testfile.cases[i];
+                            var teststr = "nearley-test -i " + "'" + current + "' " + outputdest;
 
-                                            }
 
-                                        } else {
-                                            console.log(color("=> no tests exists", "YELLOW"));
-                                            return;
-                                        }
-                                    }
-                                });
-                                return;
-                            }
-                        })
-                    }
-                    return;
-                })
-                return;
+                            shell.exec(teststr, { silent: true }, function(code, stdout, stderr) {
+                                if (stderr == "") {
+                                    console.log(color("passed case => " + this.current, "GREEN"));
+                                } else {
+                                    console.log(color("failed case => " + this.current, "RED"));
+                                }
+                            }.bind({ current: current }));
+
+
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        return;
+                    });
             }
             var current = deps.pop();
             bufferAndDeps = getBufferAndDeps(current);

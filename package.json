@@ -9,7 +9,9 @@
   "author": "Pranav Kumar",
   "license": "ISC",
   "dependencies": {
-    "nearley": "^2.11.0"
+    "fs-extra": "^4.0.1",
+    "nearley": "^2.11.0",
+    "q": "^1.5.0"
   },
   "devDependencies": {
     "async": "^2.5.0",
