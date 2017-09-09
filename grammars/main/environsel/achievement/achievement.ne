@@ -2,17 +2,17 @@
 @builtin "number.ne"
 
 achievement-> wickettakerstring
-		| "run getter"i
-		| "run getters"i
-		| "scorer"i
 		| "runs"i
+		| "spell"i
+		| "spells"i
+		| "inning"i
+		| "innings"i
 		| "wickets"i
 		| "fifties"i
 		| "century"i
 		| "centuries"i
 		| "score"i
 		| "scores"i
-		| "scorers"i
 		| partnership
 
 partnership -> partnershipstring

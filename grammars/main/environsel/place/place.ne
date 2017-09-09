@@ -1,2 +1,4 @@
-place -> "Mohali"i
-	| "Mumbai"i
+place -> [a-zA-Z ]
+	| [a-zA-Z ] place
+
+

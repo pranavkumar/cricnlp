@@ -10,3 +10,7 @@ entity -> "batsman"i
 		| "fielders"i
 		| "player"i
 		| "players"i
+		| "run getter"i
+		| "run getters"i
+		| "scorer"i
+		| "scorers"i

@@ -15,7 +15,6 @@ var gulp = require('gulp'),
 function getDeps(buffer, dirname) {
     var includereg = /@include.*\n/g;
     var matches;
-    var repmatches;
     var depsArr = [];
     while ((matches = includereg.exec(buffer)) != null) {
         var matched = matches[0];
@@ -47,15 +46,49 @@ function getDeps(buffer, dirname) {
     return { buffer: buffer, depsArr: depsArr };
 }
 
+function getGlobalDeps(buffer) {
+    var includereg = /@global.*\n/g;
+    var matches;
+    var depsArr = [];
+    while ((matches = includereg.exec(buffer)) != null) {
+        var matched = matches[0];
+        if (matched) {
+            var filenamereg = /".*"/g;
+            var depPathRel = filenamereg.exec(matched)[0];
+            if (depPathRel) {
+                var temp = depPathRel.replace(/"/g, "");
+                var dep = path.join(dirname, temp);
+                depsArr.push(new vinyl({ cwd: dirname, path: dep }));
+            }
+
+        }
+    }
+    var replacereg = /@global.*\n/g;
+    var replacestr = [];
+    while (true) {
+        var match = replacereg.exec(buffer);
+        if (match == null) {
+            break;
+        } else {
+            replacestr.push(match[0]);
+        }
+    }
+
+    for (var i = 0; i < replacestr.length; i++) {
+        buffer = buffer.replace(replacestr[i], "");
+    }
+    return depsArr;
+}
+
 function getBufferAndDeps(file) {
     var buffer = read.sync(file.path, 'utf-8');
     var deps = getDeps(buffer, path.dirname(file.path));
     return { buffer: deps.buffer, deps: deps.depsArr };
 };
 
-function execShell(command) {
+function execShell(command, options) {
     var deferred = q.defer();
-    shell.exec(command, function(code, stdout, stderr) {
+    shell.exec(command, options || {}, function(code, stdout, stderr) {
         if (stderr == "") {
             deferred.resolve();
         } else {
@@ -123,6 +156,7 @@ gulp.task('watch-tests', function() {
 
                         if (!testfile || !testfile.cases || testfile.cases.length == 0) return;
                         console.log(color(testfile.cases.toString(), "YELLOW"));
+
                         for (var i = 0; i < testfile.cases.length; i++) {
                             var current = testfile.cases[i];
                             var teststr = "nearley-test -i " + "'" + current + "' " + outputdest;
@@ -172,10 +206,12 @@ gulp.task('watch-grammars', function() {
 
         var glob = "";
         var deps = [];
+        var globalDeps = [];
+        var globalGlob = "";
         var bufferAndDeps = getBufferAndDeps(file);
         glob += bufferAndDeps.buffer;
         deps = deps.concat(bufferAndDeps.deps);
-
+        
 
 
         while (deps.length >= 0) {

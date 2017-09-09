@@ -1,10 +1,15 @@
 {
     "cases": ["bowler in test",
+    	"spell by sachin tendulkar",
         "bowlers in odi",
         "batsmen in psl",
         "batting in ipl",
         "batting     avg in ipl",
         "fielders in world cup",
-        "centuries in psl"
+        "centuries in psl",
+        "centuries by kohli",
+        "centuries by kohli in mohali",
+        "centuries in mohali by kohli",
+        "spell by brett lee in kolkata"
     ]
 }
